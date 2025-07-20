@@ -8,6 +8,7 @@ Shirley é uma aplicação web interativa criada com Streamlit e alimentada pela
 *   **Geração de Vocabulário:** A IA gera uma lista de vocabulário com base no tópico da conversa.
 *   **Exercícios de Preenchimento de Lacunas:** A IA cria frases para completar para testar a sua compreensão.
 *   **Feedback Instantâneo:** Verifique as suas respostas e obtenha feedback imediato.
+*   **Pronúncia de Áudio:** Ouça a pronúncia correta de cada palavra do vocabulário.
 
 ## Como Executar a Aplicação
 
@@ -45,4 +46,5 @@ Shirley é uma aplicação web interativa criada com Streamlit e alimentada pela
 
 *   **Streamlit:** Para a interface do utilizador da aplicação web.
 *   **Google Gemini:** Para a geração de conteúdo de IA.
+*   **gTTS:** Para a funcionalidade de text-to-speech.
 *   **Python:** A linguagem de programação principal.

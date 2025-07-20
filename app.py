@@ -2,6 +2,9 @@ import streamlit as st
 import json
 import requests
 import os
+from gtts import gTTS
+from io import BytesIO
+import base64
 
 # --- Configurações da Página ---
 st.set_page_config(
@@ -139,6 +142,25 @@ def check_answers_action():
             new_feedback[i] = 'incorrect'
     st.session_state.feedback = new_feedback
     st.rerun()
+
+# --- Função para Gerar Áudio ---
+def text_to_speech_base64(text, lang):
+    """Gera áudio a partir de texto usando gTTS e o idioma da sessão."""
+    lang_code_map = {
+        'Inglês': 'en', 'Português': 'pt', 'Espanhol': 'es',
+        'Francês': 'fr', 'Alemão': 'de', 'Japonês': 'ja'
+    }
+    lang_code = lang_code_map.get(lang, 'en')
+    try:
+        tts = gTTS(text=text, lang=lang_code, slow=False)
+        audio_fp = BytesIO()
+        tts.write_to_fp(audio_fp)
+        audio_fp.seek(0)
+        audio_base64 = base64.b64encode(audio_fp.read()).decode('utf-8')
+        return f"data:audio/mp3;base64,{audio_base64}"
+    except Exception as e:
+        print(f"Erro ao gerar áudio para '{text}': {e}")
+        return None
 
 # --- Layout da Aplicação Streamlit ---
 
@@ -300,7 +322,7 @@ st.selectbox(
 
 # Layout de uma coluna
 with st.container(border=True):
-    st.subheader("Converse com a IA")
+    st.subheader("Converse com a Shirley")
     
     # Área de exibição do chat
     with st.container():
@@ -340,6 +362,9 @@ if st.session_state.vocabulary or st.session_state.sentences:
             for i, item in enumerate(st.session_state.vocabulary):
                 with vocab_cols[i % 2]:
                     st.markdown(f"**{item['word']}**<br>{item['translation']}", unsafe_allow_html=True)
+                    audio_base64 = text_to_speech_base64(item['word'], st.session_state.selected_language)
+                    if audio_base64:
+                        st.audio(audio_base64, format='audio/mp3')
 
         # Seção de Exercícios (Frases com Lacunas)
         if st.session_state.sentences:
@@ -355,7 +380,8 @@ if st.session_state.vocabulary or st.session_state.sentences:
 
                     parts = full_sentence.split(blank_word, 1)
                     
-                    col1, col2, col3 = st.columns([len(parts[0]), len(blank_word) + 5, len(parts[1])])
+                    spec = [max(1, len(parts[0])), len(blank_word) + 5, max(1, len(parts[1]))]
+                    col1, col2, col3 = st.columns(spec)
 
                     with col1:
                         st.write(parts[0])
