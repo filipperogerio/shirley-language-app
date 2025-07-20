@@ -128,7 +128,6 @@ def send_message_action():
             st.session_state.chat_history.append({"role": "ai", "text": "Desculpe, não consegui gerar o conteúdo. Por favor, tente novamente com outro tópico."})
         
         st.session_state.is_loading = False
-        st.rerun() # Força a re-execução para atualizar a UI
 
 # --- Função para Verificar Respostas ---
 def check_answers_action():
@@ -404,7 +403,7 @@ if st.session_state.vocabulary or st.session_state.sentences:
                     if feedback == 'correct':
                         st.success("Correto!")
                     elif feedback == 'incorrect':
-                        st.error(f"Incorreto. A resposta certa é: {blank_word}")
+                        st.error(f"Incorreto, tente novamente.")
 
 
         st.button(
