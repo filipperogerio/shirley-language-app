@@ -17,15 +17,22 @@ class App:
         self.ui_components = UIComponents(self.state_manager, self.audio_generator)
 
     def send_message_action(self):
-        if self.state_manager.get_state("current_message"):
-            user_message = {"role": "user", "text": self.state_manager.get_state("current_message")}
+        current_message = self.state_manager.get_state("current_message")
+        if current_message:
+            user_message = {"role": "user", "text": current_message}
             self.state_manager.get_state('chat_history').append(user_message)
             
             self.state_manager.set_state('is_loading', True)
-            self.state_manager.set_state('current_message', "")
+            
+            # Clear the message by deleting the key and rerunning
+            if 'current_message' in st.session_state:
+                del st.session_state['current_message']
 
             ai_response_data = self.gemini_client.get_ai_content(user_message['text'], self.state_manager.get_state('selected_language'))
             self.state_manager.update_after_api_call(ai_response_data)
+            
+            # Rerun to refresh the UI
+            st.rerun()
 
     def run(self):
         self.ui_components.display_header()

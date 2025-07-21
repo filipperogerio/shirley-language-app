@@ -57,25 +57,69 @@ class UIComponents:
                 background-color: #e5e7eb; /* bg-gray-200 */
                 color: #374151; /* text-gray-800 */
             }
+            .chat-input-container {
+                display: flex !important;
+                gap: 0.5rem !important;
+                align-items: flex-end !important;
+                width: 100% !important;
+                margin-bottom: 0 !important;
+            }
+            .chat-input-wrapper {
+                flex: 1 !important;
+                min-width: 0 !important;
+            }
+            .chat-input-wrapper > div {
+                margin-bottom: 0 !important;
+            }
+            .chat-input-wrapper > div > div {
+                margin-bottom: 0 !important;
+            }
+            .send-button-wrapper {
+                flex-shrink: 0 !important;
+                width: 60px !important;
+                display: flex !important;
+                align-items: flex-end !important;
+            }
+            .send-button-wrapper > div {
+                margin-bottom: 0 !important;
+                height: 48px !important;
+                width: 100% !important;
+            }
+            .send-button-wrapper button {
+                background-color: #3b82f6 !important;
+                color: white !important;
+                border: none !important;
+                border-radius: 0.5rem !important;
+                padding: 0.75rem !important;
+                font-weight: 600 !important;
+                cursor: pointer !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                width: 100% !important;
+                height: 48px !important;
+                font-size: 1.2rem !important;
+                margin: 0 !important;
+            }
+            .send-button-wrapper button:hover {
+                background-color: #2563eb !important;
+            }
+            .send-button-wrapper button:focus {
+                outline: none !important;
+                box-shadow: 0 0 0 2px #3b82f6, 0 0 0 4px #bfdbfe !important;
+            }
+            .send-button-wrapper button:disabled {
+                background-color: #9ca3af !important;
+                cursor: not-allowed !important;
+            }
+            /* Ensure text input has consistent height */
             .stTextInput > div > div > input {
-                border-radius: 0.5rem 0 0 0.5rem; /* rounded-l-lg */
-                border-width: 2px; /* border-2 */
-                border-color: #93c5fd; /* border-blue-300 */
-                padding: 0.75rem; /* p-3 */
-            }
-            .stButton > button {
-                border-radius: 0 0.5rem 0.5rem 0; /* rounded-r-lg */
-                background-color: #2563eb; /* bg-blue-600 */
-                color: white;
-                padding: 0.75rem; /* p-3 */
-                font-weight: 600; /* font-semibold */
-            }
-            .stButton > button:hover {
-                background-color: #1d4ed8; /* hover:bg-blue-700 */
-            }
-            .stButton > button:focus {
-                outline: none;
-                box-shadow: 0 0 0 2px #3b82f6, 0 0 0 4px #bfdbfe; /* focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 */
+                height: 48px !important;
+                border-radius: 0.5rem !important;
+                border-width: 2px !important;
+                border-color: #93c5fd !important;
+                padding: 0.75rem !important;
+                box-sizing: border-box !important;
             }
             .vocabulary-item {
                 background-color: #dbeafe; /* bg-blue-100 */
@@ -169,13 +213,31 @@ class UIComponents:
                     st.markdown('<div class="text-center text-gray-500"><span class="animate-pulse">A Shirley está pensando...</span></div>', unsafe_allow_html=True)
                 st.markdown('</div>', unsafe_allow_html=True)
 
-            st.text_input(
-                "Peça um tópico (ex: 'viagem', 'comida')",
-                key="current_message",
-                on_change=send_message_callback,
-                disabled=self.state_manager.get_state('is_loading'),
-                placeholder="Digite seu tópico aqui..."
-            )
+            # Create a container for the input and button
+            st.markdown('<div class="chat-input-container">', unsafe_allow_html=True)
+            
+            # Create columns for input and button
+            col1, col2 = st.columns([5, 1])
+            
+            with col1:
+                st.markdown('<div class="chat-input-wrapper">', unsafe_allow_html=True)
+                st.text_input(
+                    "Peça um tópico (ex: 'viagem', 'comida')",
+                    key="current_message",
+                    disabled=self.state_manager.get_state('is_loading'),
+                    placeholder="Digite seu tópico aqui...",
+                    label_visibility="collapsed"
+                )
+                st.markdown('</div>', unsafe_allow_html=True)
+            
+            with col2:
+                st.markdown('<div class="send-button-wrapper">', unsafe_allow_html=True)
+                if st.button("✈️", key="send_button", disabled=self.state_manager.get_state('is_loading'), help="Enviar mensagem", use_container_width=True):
+                    if st.session_state.current_message:
+                        send_message_callback()
+                st.markdown('</div>', unsafe_allow_html=True)
+            
+            st.markdown('</div>', unsafe_allow_html=True)
 
     def display_vocabulary(self):
         if self.state_manager.get_state('vocabulary'):
